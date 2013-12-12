@@ -1,0 +1,18 @@
+{{#each issues}}
+	<h1>
+		{{#if new}}
+			[New]
+		{{/if}}
+		{{#if active}}
+			[Active]
+		{{/if}}
+		<a href="{{issue.html_url}}">{{issue.title}}</a>
+	</h1>
+	{{#if new}}
+		<p>{{marked issue.body}}</p>
+	{{/if}}
+	{{#each comments}}
+		<h2><a href="{{user.html_url}}">@{{user.login}}</a> commented {{fromNow created_at}}</h2>
+		<p>{{marked body}}</p>
+	{{/each}}
+{{/each}}

@@ -1,0 +1,33 @@
+{
+  "name": "github-digest",
+  "version": "0.0.0",
+  "description": "Github Digest Email",
+  "main": "web.js",
+  "dependencies": {
+    "handlebars": "~1.1.2",
+    "marked": "~0.2.10",
+    "moment": "~2.4.0",
+    "request": "~2.29.0",
+    "rsvp": "~2.0.4",
+    "express": "~3.4.7",
+    "logfmt": "~0.17.0",
+    "sendgrid": "~0.4.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsedlacek/github-digest.git"
+  },
+  "keywords": [
+    "github",
+    "digest"
+  ],
+  "author": "Jakub Sedlacek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsedlacek/github-digest/issues"
+  }
+}
