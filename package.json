@@ -11,7 +11,8 @@
     "rsvp": "~2.0.4",
     "express": "~3.4.7",
     "logfmt": "~0.17.0",
-    "sendgrid": "~0.4.6"
+    "sendgrid": "~0.4.6",
+    "highlight.js": "~7.5.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -6,6 +6,7 @@ var handlebars = require('handlebars');
 var moment = require('moment');
 var marked = require('marked');
 var rsvp = require('rsvp');
+var hljs = require('highlight.js');
 
 var template = handlebars.compile(fs.readFileSync("issues.hbs", {encoding: 'utf8'}));
 
@@ -14,13 +15,18 @@ handlebars.registerHelper('fromNow', function(context, block) {
 });
 
 handlebars.registerHelper('marked', function(context, block) {
+    if (!context) {
+        return "";
+    }
     return new handlebars.SafeString(marked(context));
 });
 
-handlebars.registerHelper('issue-number', function(context, block) {
-    var index = context.issue_url.lastIndexOf("/");
-    return "#" + context.issue_url.substring(index + 1);
+handlebars.registerHelper('diff', function(code, length) {
+    var array = code.split("\n");
+    array = array.splice(array.length - length);
+    return new handlebars.SafeString(hljs.highlight("diff", array.join("\n")).value);
 });
+
 
 function getFromGithub(url) {
     return new rsvp.Promise(function(resolve, reject) {
@@ -29,6 +35,7 @@ function getFromGithub(url) {
                 url: url,
                 headers: {
                     'User-Agent': 'Github Digest',
+                    'Accept': 'application/vnd.github.html+json',
                     'Authorization': 'token ' + process.env.GITHUB_TOKEN
                 }
             }, function (error, response, body) {
@@ -55,12 +62,20 @@ function getIssues(repo, since) {
     );
 }
 
-function getIssueComment(issue, since) {
-    return getFromGithub(util.format('%s?since=%s',
+function getIssueComments(issue, since) {
+    var promises = [];
+    promises.push(getFromGithub(util.format('%s?since=%s',
         issue.comments_url,
         since.toISOString()
-    )).then(function(comments) {
-        return {issue: issue, comments: comments};
+    )));
+    if (issue.pull_request.html_url) {
+        promises.push(getFromGithub(util.format('%s?since=%s',
+            issue.comments_url.replace("/issues/", "/pulls/"),
+            since.toISOString()
+        )));
+    }
+    return rsvp.all(promises).then(function(results) {
+        return {issue: issue, comments: results[0], pullComments: results[1]};
     });
 }
 
@@ -68,10 +83,10 @@ function getIssueComment(issue, since) {
 function getDigest(repo, since) {
 	return getIssues(repo, since).then(function(issues) {
 	    return rsvp.all(issues.map(function(issue) {
-	        return getIssueComment(issue, since);
+	        return getIssueComments(issue, since);
 	    }));
 	}).then(function(issues) {
-	    issues.forEach(function(issue) {
+        issues.forEach(function(issue) {
 	        if (+moment(issue.issue.created_at) > +since) {
 	            issue.new = true;
 	        }
@@ -79,7 +94,6 @@ function getDigest(repo, since) {
 	            issue.active = true;
 	        }
 	    });
-	    // fs.writeFileSync("issues.html", template({issues: issues}));
 	    return template({issues: issues});
 	});
 }

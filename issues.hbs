@@ -1,3 +1,15 @@
+<style>
+.chunk {
+	background-color: lightgray;
+}
+.addition {
+	background-color: lightgreen;
+}
+.deletion {
+	background-color: lightpink;
+}
+</style>
+
 {{#each issues}}
 	<h1>
 		{{#if new}}
@@ -9,10 +21,15 @@
 		<a href="{{issue.html_url}}">{{issue.title}}</a>
 	</h1>
 	{{#if new}}
-		<p>{{marked issue.body}}</p>
+		{{{issue.body_html}}}
 	{{/if}}
 	{{#each comments}}
 		<h2><a href="{{user.html_url}}">@{{user.login}}</a> commented {{fromNow created_at}}</h2>
-		<p>{{marked body}}</p>
+		{{{body_html}}}
+	{{/each}}
+	{{#each pullComments}}
+		<h2><a href="{{user.html_url}}">@{{user.login}}</a> commented on the diff {{fromNow created_at}}</h2>
+		<pre>{{diff diff_hunk 10}}</pre>
+		{{{marked body}}}
 	{{/each}}
 {{/each}}
