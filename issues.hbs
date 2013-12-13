@@ -11,7 +11,10 @@
 </style>
 
 {{#each issues}}
-	<h1>
+	<h2>
+		{{#if closed}}
+			[Closed]
+		{{/if}}
 		{{#if new}}
 			[New]
 		{{/if}}
@@ -19,16 +22,16 @@
 			[Active]
 		{{/if}}
 		<a href="{{issue.html_url}}">{{issue.title}}</a>
-	</h1>
+	</h2>
 	{{#if new}}
 		{{{issue.body_html}}}
 	{{/if}}
 	{{#each comments}}
-		<h2><a href="{{user.html_url}}">@{{user.login}}</a> commented {{fromNow created_at}}</h2>
+		<h3><a href="{{user.html_url}}">@{{user.login}}</a> <a href="{{html_url}}">commented</a> {{fromNow created_at}}</h3>
 		{{{body_html}}}
 	{{/each}}
 	{{#each pullComments}}
-		<h2><a href="{{user.html_url}}">@{{user.login}}</a> commented on the diff {{fromNow created_at}}</h2>
+		<h3><a href="{{user.html_url}}">@{{user.login}}</a> <a href="{{html_url}}">commented</a> on the diff {{fromNow created_at}}</h3>
 		<pre>{{diff diff_hunk 10}}</pre>
 		{{{marked body}}}
 	{{/each}}

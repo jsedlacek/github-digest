@@ -53,11 +53,13 @@ function getFromGithub(url) {
     });
 }
 
-function getIssues(repo, since) {
+function getIssues(repo, since, state) {
+    state = state || "open";
     return getFromGithub(
-        util.format('https://api.github.com/repos/%s/issues?since=%s',
+        util.format('https://api.github.com/repos/%s/issues?since=%s&state=%s',
             repo,
-            since.toISOString()
+            since.toISOString(),
+            state
         )
     );
 }
@@ -79,15 +81,28 @@ function getIssueComments(issue, since) {
     });
 }
 
+function getAllIssues(repo, since) {
+    return rsvp.all(
+        [getIssues(repo, since, "open"), getIssues(repo, since, "closed")]
+    ).then(function(issues) {
+        var openIssues = issues[0];
+        var closedIssues = issues[1];
+        return openIssues.concat(closedIssues);
+    });
+}
+
 
 function getDigest(repo, since) {
-	return getIssues(repo, since).then(function(issues) {
+	return getAllIssues(repo, since).then(function(issues) {
 	    return rsvp.all(issues.map(function(issue) {
 	        return getIssueComments(issue, since);
 	    }));
 	}).then(function(issues) {
         issues.forEach(function(issue) {
-	        if (+moment(issue.issue.created_at) > +since) {
+            if (issue.issue.state === "closed") {
+                issue.closed = true;
+            }
+	        else if (+moment(issue.issue.created_at) > +since) {
 	            issue.new = true;
 	        }
 	        else if (+moment(issue.issue.updated_at) > +since) {
