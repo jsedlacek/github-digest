@@ -12,6 +12,9 @@
 
 {{#each issues}}
 	<h2>
+		{{#if merged}}
+			[Merged]
+		{{/if}}
 		{{#if closed}}
 			[Closed]
 		{{/if}}

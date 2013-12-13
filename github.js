@@ -99,7 +99,10 @@ function getDigest(repo, since) {
 	    }));
 	}).then(function(issues) {
         issues.forEach(function(issue) {
-            if (issue.issue.state === "closed") {
+            if (issue.issue.pull_request.html_url && issue.issue.state === "closed") {
+                issue.merged = true;
+            }
+            else if (issue.issue.state === "closed") {
                 issue.closed = true;
             }
 	        else if (+moment(issue.issue.created_at) > +since) {
