@@ -12,7 +12,8 @@
     "express": "~3.4.7",
     "logfmt": "~0.17.0",
     "sendgrid": "~0.4.6",
-    "highlight.js": "~7.5.0"
+    "highlight.js": "~7.5.0",
+    "styliner": "~0.8.8"
   },
   "devDependencies": {},
   "scripts": {

@@ -7,8 +7,10 @@ var moment = require('moment');
 var marked = require('marked');
 var rsvp = require('rsvp');
 var hljs = require('highlight.js');
+var Styliner = require('styliner');
 
 var template = handlebars.compile(fs.readFileSync("issues.hbs", {encoding: 'utf8'}));
+var styliner = new Styliner(__dirname);
 
 handlebars.registerHelper('fromNow', function(context, block) {
     return moment(context).fromNow();
@@ -112,7 +114,7 @@ function getDigest(repo, since) {
 	            issue.active = true;
 	        }
 	    });
-	    return template({issues: issues});
+        return styliner.processHTML(template({issues: issues}))
 	});
 }
 
