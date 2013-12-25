@@ -13,16 +13,27 @@ var sendgrid  = require('sendgrid')(
 
 var since = moment().subtract('d', 1);
 
-github.getDigest("google/traceur-compiler", since).then(function(html) {
-    sendgrid.send({
-        to: 'sedlacek.jakub@gmail.com',
-        from: 'sedlacek.jakub@gmail.com',
-        subject: 'Traceur Compiler Digest',
-        html: html
-    }, function(err, json) {
-    if (err) { return console.error(err); }
-        console.log(json);
+var REPOS = [
+    "google/traceur-compiler",
+    "bower/bower",
+    "jorendorff/js-loaders",
+    "ModuleLoader/es6-module-loader"
+];
+
+REPOS.forEach(function(repo) {
+    github.getDigest(repo, since).then(function(html) {
+        if (html) {
+            sendgrid.send({
+                to: 'sedlacek.jakub@gmail.com',
+                from: 'sedlacek.jakub@gmail.com',
+                subject: repo + ' digest',
+                html: html
+            }, function(err, json) {
+                if (err) { return console.error(err); }
+                console.log(json);
+            });
+        }
+    }).fail(function(error) {
+        console.error(error);
     });
-}).fail(function(error) {
-    console.error(error);
 });

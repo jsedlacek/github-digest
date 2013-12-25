@@ -100,6 +100,10 @@ function getDigest(repo, since) {
 	        return getIssueComments(issue, since);
 	    }));
 	}).then(function(issues) {
+        if (issues.length === 0) {
+            return null;
+        }
+
         issues.forEach(function(issue) {
             if (issue.issue.pull_request.html_url && issue.issue.state === "closed") {
                 issue.merged = true;
