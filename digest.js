@@ -17,7 +17,8 @@ var REPOS = [
     "google/traceur-compiler",
     "bower/bower",
     "jorendorff/js-loaders",
-    "ModuleLoader/es6-module-loader"
+    "ModuleLoader/es6-module-loader",
+    "emberjs/ember.js"
 ];
 
 REPOS.forEach(function(repo) {
